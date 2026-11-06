@@ -1,0 +1,378 @@
+:root {
+  --chat-bg: #b2c7da;
+  --yellow: #fee500;
+  --yellow-dark: #f2d900;
+  --white: #ffffff;
+  --text: #191919;
+  --on-chat-muted: #3b4957;
+  --muted: #5f6368;
+  --border: #e3e5e8;
+  --disabled-bg: #ececec;
+  --disabled-text: #8a8a8a;
+  --avatar-bg: #9bb3c9;
+  --error-bg: #fff1f0;
+  --error-text: #b91c1c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #f4f6f8;
+  color: var(--text);
+  font-family: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  line-height: 1.45;
+}
+
+/* 오른쪽 아래 채팅 아이콘 */
+.chat-launcher {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background: var(--yellow);
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  color: #3a2a1d;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.chat-launcher:hover {
+  background: var(--yellow-dark);
+  transform: scale(1.06);
+}
+
+.chat-launcher:focus-visible {
+  outline: 3px solid #3a2a1d;
+  outline-offset: 2px;
+}
+
+/* 레이어 팝업 채팅창 */
+.chat-window {
+  position: fixed;
+  right: 24px;
+  bottom: 96px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  height: min(680px, calc(100vh - 120px));
+  height: min(680px, calc(100dvh - 120px));
+  overflow: hidden;
+  background: var(--chat-bg);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* 머리글 */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--chat-bg);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.header-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.close-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.clear-button {
+  flex-shrink: 0;
+  min-height: 34px;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.55);
+  border: none;
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.clear-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.clear-button:disabled {
+  color: var(--on-chat-muted);
+  cursor: not-allowed;
+}
+
+/* 대화 영역 */
+.message-list {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 12px;
+  overflow-y: auto;
+}
+
+.empty-message {
+  margin: auto;
+  padding: 6px 14px;
+  background: rgba(0, 0, 0, 0.12);
+  border-radius: 14px;
+  color: var(--text);
+  font-size: 0.875rem;
+}
+
+.message-row {
+  display: flex;
+  gap: 8px;
+}
+
+.message-row-user {
+  justify-content: flex-end;
+}
+
+.avatar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--avatar-bg);
+  border-radius: 15px;
+  color: var(--white);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.message-body {
+  min-width: 0;
+  max-width: 75%;
+}
+
+.sender-name {
+  margin-bottom: 4px;
+  color: var(--on-chat-muted);
+  font-size: 0.75rem;
+}
+
+.bubble-line {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.message-row-user .bubble-line {
+  flex-direction: row-reverse;
+}
+
+.message-time {
+  flex-shrink: 0;
+  color: var(--on-chat-muted);
+  font-size: 0.6875rem;
+  white-space: nowrap;
+}
+
+.bubble {
+  position: relative;
+  min-width: 0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.9375rem;
+  white-space: pre-wrap;
+  word-break: keep-all; /* 한글을 단어 단위로 줄바꿈 */
+  overflow-wrap: anywhere; /* 아주 긴 글자열은 칸에 맞춰 끊기 */
+}
+
+/* 말풍선 꼬리 */
+.bubble::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+.bubble-user {
+  background: var(--yellow);
+}
+
+.bubble-user::before {
+  right: -6px;
+  border-left: 7px solid var(--yellow);
+}
+
+.bubble-assistant,
+.bubble-loading {
+  background: var(--white);
+}
+
+.bubble-assistant::before,
+.bubble-loading::before {
+  left: -6px;
+  border-right: 7px solid var(--white);
+}
+
+.bubble-loading {
+  color: var(--muted);
+}
+
+.bubble-error {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+.bubble-error::before {
+  left: -6px;
+  border-right: 7px solid var(--error-bg);
+}
+
+/* 입력 영역 */
+.composer {
+  padding: 10px 12px;
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+  background: var(--white);
+}
+
+.composer-form {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.composer textarea {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 4px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 16px; /* 16px보다 작으면 아이폰에서 입력할 때 화면이 확대된다. */
+  resize: none;
+}
+
+.composer textarea:focus {
+  outline: none;
+}
+
+.composer textarea:focus-visible {
+  box-shadow: inset 0 -2px 0 var(--yellow-dark);
+}
+
+.send-button {
+  flex-shrink: 0;
+  align-self: flex-end;
+  min-width: 64px;
+  min-height: 40px;
+  padding: 0 12px;
+  background: var(--yellow);
+  border: none;
+  border-radius: 8px;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.send-button:hover:not(:disabled) {
+  background: var(--yellow-dark);
+}
+
+.send-button:disabled {
+  background: var(--disabled-bg);
+  color: var(--disabled-text);
+  cursor: not-allowed;
+}
+
+.composer-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.notice {
+  margin: 0;
+  word-break: keep-all;
+}
+
+.counter {
+  flex-shrink: 0;
+}
+
+/* 휴대폰 화면 */
+@media (max-width: 480px) {
+  .chat-launcher {
+    right: 16px;
+    bottom: 16px;
+  }
+
+  /* 휴대폰에서는 창을 화면 가득 열고, 닫기는 머리글의 X 버튼으로 한다. */
+  .chat-launcher-open {
+    display: none;
+  }
+
+  .chat-window {
+    inset: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .message-body {
+    max-width: 80%;
+  }
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 14px;
+  }
+}
